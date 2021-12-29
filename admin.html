@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        table,td {
+            border: 1px solid black
+        }
+    </style>
+    <h2>Admin</h2>
+
+    <input id='name' type="text"  placeholder="your name">
+    <input id='pass' type="password"  placeholder="password">
+    <input id='re-pass' type="password"  placeholder="Confirm your password:">
+    <button id="btn-create" onclick="checkUser()">create</button>
+
+
+    <table id="table-admin" class="table-admin">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Tên KH</th>
+            <th>SĐT</th>
+            <th>Địa chỉ</th>
+            <th>Ngày mua</th>
+            <th>Tên SP</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+          </tr>
+        </thead>
+        <tbody id="table-admin">
+          <tr>
+            <th>1</th>
+            <td>Mark</td>
+            <td>081234567</td>
+            <td>101b le hue trac</td>
+            <td>21-12-2233</td>
+            <td>vay dai</td>
+            <td>2</td>
+            <td>400000</td>
+          </tr>
+          <tr>
+       
+          
+        </tbody>
+      </table>
+      <script>
+          var b = ''
+          var userApi = 'http://localhost:3000/users'
+          
+            function createUser(data){
+                var options = {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {'Content-Type': 'application/json'}
+                }
+                fetch(userApi, options)
+                    .then(function(response){
+                        response.json();
+                    })
+                    .then(callback);
+
+            }
+
+            function checkUser(){
+                var name = document.getElementById("name").value;
+                var password = document.getElementById("pass").value;
+                var rePassword = document.getElementById("re-pass").value;
+
+                getUser(function(users){
+                    var count = 0;
+                    for (var i = 0; i < users.length; i++){
+                        if (users[i].name === name){
+                            count +=1;
+                        }
+                    }
+                    if (count === 0){
+                        if (password !== rePassword){
+                            alert("Password is not match")
+                        } else {
+                            handleUser(name,password)
+                        }
+    
+                    } else{
+                        alert("This account already exists")
+                    }
+                })               
+            }
+
+            function start(){
+                getUser(renderUser);
+            }
+
+            start()
+
+            function getUser (callback) {
+                fetch(userApi)
+                    .then(function(response){
+                        return response.json();
+                    })
+                    .then(callback)
+            }
+
+            function handleUser(name, password){
+                console.log(name)
+                console.log(password)
+                var formData = {
+                    name: name,
+                    password: password
+                }
+                createUser(formData)               
+            }
+          
+
+            function renderUser(users){
+                var listUser = document.getElementById("table-admin");
+                var htmls = users.map(function(user){
+                    return `
+                    <tr>
+                        <th>1</th>
+                        <td>${user.name}</td>
+                        <td>${user.password}</td>
+                        <td>101b le hue trac</td>
+                        <td>21-12-2233</td>
+                        <td>vay dai</td>
+                        <td>2</td>
+                        <td>400000</td>
+                    </tr>
+                    `
+                });
+
+                listUser.innerHTML = htmls.join('')
+            }
+
+
+      </script>
+</body>
+</html>
